@@ -1,6 +1,6 @@
 var hero = {
-    x: 300,
-    y: 300
+    x: 500,
+    y: 500
 };
 var score = 0;
 
@@ -11,7 +11,7 @@ var enemies = [];
 var enemy_counter = 0;
 
 function shoot() {
-    bullets.push({x: hero.x, y: hero.y, id: "#b"+bullet_counter});
+    bullets.push({x: hero.x+43, y: hero.y, id: "#b"+bullet_counter});
     var b = "<div class='bullet' id='b" + bullet_counter + "'></div>";
     $("#bullets").append(b);
     bullet_counter++;
@@ -39,7 +39,7 @@ function drawArray(arr) {
 function checkBulletHits() {
     for(var b=0; b<bullets.length; b++) {
         for(var e=0; e<enemies.length; e++) {
-            if(bullets[b].x>enemies[e].x-18 && bullets[b].x<enemies[e].x+28 && bullets[b].y>enemies[e].y-18  && bullets[b].y<enemies[e].y+28) {
+            if(bullets[b].x>enemies[e].x-18 && bullets[b].x<enemies[e].x+111 && bullets[b].y>enemies[e].y-18  && bullets[b].y<enemies[e].y+50) {
                 removeFromArray(bullets, b);
                 removeFromArray(enemies, e);
                 e--;
@@ -49,6 +49,17 @@ function checkBulletHits() {
                     return;
                 }
             }
+        }
+    }
+}
+
+function checkHeroCollision() {
+    for(var e=0; e<enemies.length; e++) {
+        if(enemies[e].x>hero.x-75 && enemies[e].x<hero.x+75 && enemies[e].y>hero.y-75 && enemies[e].y<hero.y+75) {
+            removeFromArray(enemies, e);
+            e--;
+            score -= 500;
+            updateScore();
         }
     }
 }
@@ -82,6 +93,17 @@ function moveBullets() {
     drawArray(bullets);
 }
 
+function moveEnemies() {
+    for(var i=0; i<enemies.length; i++) {
+        enemies[i].y += 1;
+        if(enemies[i].y > 750) {
+            removeFromArray(enemies, i);
+            i--;
+        }
+    }
+    drawArray(enemies);
+}
+
 function updateScore() {
     $("#score").text(score);
 }
@@ -99,13 +121,15 @@ document.onkeydown = function(e){
 function gameLoop() {
     // console.log("hello");
     moveBullets();
+    moveEnemies();
     checkBulletHits();
-    setTimeout(gameLoop, 500);
+    checkHeroCollision();
+    setTimeout(gameLoop, 50);
 }
 
 $(document).ready(function(){
     for(var i=0; i<7; i++) {
-        createEnemy(100*(i+1), 100);
+        createEnemy(150*(i+1), 100);
     }
     drawArray(enemies);
     drawHero();
