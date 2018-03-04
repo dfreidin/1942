@@ -128,6 +128,11 @@ document.onkeydown = function(e){
 
 function gameLoop() {
     // console.log("hello");
+    if(enemies.length == 0) {
+        for(var i=0; i<7; i++) {
+            createEnemy(150*(i+1), 100);
+        }
+    }
     moveArray(bullets, -10);
     moveArray(enemies, 1);
     checkBulletHits();
@@ -136,9 +141,6 @@ function gameLoop() {
 }
 
 $(document).ready(function(){
-    for(var i=0; i<7; i++) {
-        createEnemy(150*(i+1), 100);
-    }
     drawArray(enemies);
     drawHero();
     gameLoop();
