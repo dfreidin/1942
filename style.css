@@ -21,7 +21,14 @@
     background: url("myenemy.png");
     width: 111px;
     height: 101px;
+    /* background-size: cover; */
     position:absolute;
+}
+.explosion{
+    background: url("explosion.png");
+    width: 96px;
+    height: 96px;
+    position: absolute;
 }
 .bullet{
     background: url('1942.gif');

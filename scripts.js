@@ -41,7 +41,8 @@ function checkBulletHits() {
         for(var e=0; e<enemies.length; e++) {
             if(bullets[b].x>enemies[e].x-18 && bullets[b].x<enemies[e].x+111 && bullets[b].y>enemies[e].y-18  && bullets[b].y<enemies[e].y+50) {
                 removeFromArray(bullets, b);
-                removeFromArray(enemies, e);
+                // removeFromArray(enemies, e);
+                explodeEnemy(e);
                 e--;
                 score += 10;
                 updateScore();
@@ -64,6 +65,24 @@ function checkHeroCollision() {
     }
 }
 
+function explodeEnemy(e) {
+    var x = enemies[e].x + 7;
+    var y = enemies[e].y + 2;
+    var id = "#x"+e;
+    removeFromArray(enemies, e);
+    var exp = "<div class='explosion' id='x"+e+"'></div>";
+    $("#enemies").append(exp);
+    $(id).css("left", x);
+    $(id).css("top", y);
+    for(var i=0; i<12; i++) {
+        x = -96 * i;
+        // TODO: figure out why this isn't working
+        $(id).css("background", "url('explosion.png')"+x+"px 0px");
+        setTimeout(function(){}, 10);
+    }
+    $(id).remove();
+}
+
 function moveHero(dir) {      // 0: up, 1: right, 2: down, 3: left
     // console.log("moving "+dir);
     if(dir % 2 == 0) {
@@ -82,26 +101,15 @@ function removeFromArray(arr, i) {
     arr.splice(i,1);
 }
 
-function moveBullets() {
-    for(var i=0; i<bullets.length; i++) {
-        bullets[i].y -= 10;
-        if(bullets[i].y < 0) {
-            removeFromArray(bullets, i);
+function moveArray(arr, dist) {
+    for(var i=0; i<arr.length; i++) {
+        arr[i].y += dist;
+        if(arr[i].y > 750 || arr[i].y < 0) {
+            removeFromArray(arr, i);
             i--;
         }
     }
-    drawArray(bullets);
-}
-
-function moveEnemies() {
-    for(var i=0; i<enemies.length; i++) {
-        enemies[i].y += 1;
-        if(enemies[i].y > 750) {
-            removeFromArray(enemies, i);
-            i--;
-        }
-    }
-    drawArray(enemies);
+    drawArray(arr);
 }
 
 function updateScore() {
@@ -120,8 +128,8 @@ document.onkeydown = function(e){
 
 function gameLoop() {
     // console.log("hello");
-    moveBullets();
-    moveEnemies();
+    moveArray(bullets, -10);
+    moveArray(enemies, 1);
     checkBulletHits();
     checkHeroCollision();
     setTimeout(gameLoop, 50);
